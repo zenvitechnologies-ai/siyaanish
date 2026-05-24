@@ -10,8 +10,8 @@ const app = express();
 
 // CORS should be before routes
 app.use(cors({
-  origin: 'http://localhost:3000', // Your React frontend URL
-  credentials: true
+  origin: ['http://localhost:3000', 'https://siyaanish.com']
+
 }));
 
 app.use(express.json());
