@@ -1,15 +1,12 @@
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-// Import Razorpay functions
 const { createRazorpayOrder, verifyPayment } = require("./razorpay");
 
 const app = express();
 
-// CORS should be before routes
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
       'http://localhost:5000',
@@ -17,38 +14,25 @@ app.use(cors({
       'https://siyaanish.com',
       'https://www.siyaanish.com',
     ];
-    
-    // Allow requests with no origin (mobile apps, Postman, server-to-server)
     if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error(`CORS blocked: ${origin}`));
-    }
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error(`CORS blocked: ${origin}`));
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-}));
+};
 
-app.options('*', cors()); // ✅ keep this
+app.use(cors(corsOptions));
+app.options('/{*path}', cors(corsOptions)); // ✅ fixed wildcard
 
 app.use(express.json());
 
-// Routes
-app.get("/", (req, res) => {
-  res.send("Siyaanish Backend Running");
-});
+app.get("/", (req, res) => res.send("Siyaanish Backend Running"));
 
-// Auth routes
 app.use("/api/auth", require("./routes/auth"));
+app.use("/api", require("./routes/admin"));
 
-// Admin routes
-const adminRoutes = require("./routes/admin");
-app.use("/api", adminRoutes);
-
-// Razorpay routes (make sure these are after app.use(express.json()))
 app.post('/api/create-razorpay-order', createRazorpayOrder);
 app.post('/api/verify-payment', verifyPayment);
 
