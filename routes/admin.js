@@ -1,3 +1,4 @@
+// routes/admin.js
 const express = require("express");
 const router = express.Router();
 
@@ -5,8 +6,8 @@ router.post("/admin-login", async (req, res) => {
   const { email, password } = req.body;
 
   if (
-    email === "manisha@siyaanish.com" &&
-    password === "Manisha@123"
+    email === process.env.ADMIN_EMAIL &&
+    password === process.env.ADMIN_PASSWORD
   ) {
     return res.json({
       success: true,
