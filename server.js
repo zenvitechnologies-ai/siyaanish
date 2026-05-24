@@ -1,4 +1,4 @@
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -10,9 +10,29 @@ const app = express();
 
 // CORS should be before routes
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://siyaanish.com']
-
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5000',
+      'http://localhost:3000',
+      'https://siyaanish.com',
+      'https://www.siyaanish.com',
+    ];
+    
+    // Allow requests with no origin (mobile apps, Postman, server-to-server)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error(`CORS blocked: ${origin}`));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
+
+app.options('*', cors()); // ✅ keep this
 
 app.use(express.json());
 
