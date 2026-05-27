@@ -6,25 +6,13 @@ const { createRazorpayOrder, verifyPayment } = require("./razorpay");
 
 const app = express();
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      'http://localhost:5000',
-      'http://localhost:3000',
-      'https://siyaanish.com',
-      'https://www.siyaanish.com',
-    ];
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error(`CORS blocked: ${origin}`));
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+// ✅ SIMPLIFIED CORS - Remove the complex configuration
+app.use(cors({
+  origin: true,  // This dynamically reflects the request origin
   credentials: true,
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // ✅ Fixed - changed from '/{*path}' to '*'
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json());
 
