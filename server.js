@@ -24,7 +24,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // ✅ Fixed wildcard
+app.options('*', cors(corsOptions)); // ✅ Fixed - changed from '/{*path}' to '*'
 
 app.use(express.json());
 
@@ -33,8 +33,7 @@ app.get("/", (req, res) => res.send("Siyaanish Backend Running"));
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api", require("./routes/admin"));
 
-// ✅ TEST ENDPOINT - KEEP ONLY FOR TESTING, REMOVE BEFORE PRODUCTION
-// Uncomment this block ONLY when testing, comment out or delete for production
+// Test endpoint (commented out for production)
 /*
 app.post('/api/test-email', async (req, res) => {
   const { sendOrderConfirmationEmail } = require('./utils/sendOrderEmail');
