@@ -1,6 +1,8 @@
 // razorpay.js
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
+const { sendOrderConfirmationEmail } = require('./utils/sendOrderEmail');
+const supabase = require('./config/supabase');
 
 // Initialize Razorpay
 const razorpay = new Razorpay({
@@ -23,7 +25,7 @@ const createRazorpayOrder = async (req, res) => {
     }
 
     const options = {
-      amount: Math.round(amount * 100), // Amount in paise (remove decimal)
+      amount: Math.round(amount * 100),
       currency: currency || 'INR',
       receipt: `receipt_${orderId || Date.now()}`,
       notes: {
@@ -69,21 +71,51 @@ const verifyPayment = async (req, res) => {
 
     if (isValid) {
       // Payment is verified successfully
-      console.log('Payment verified successfully for order:', db_order_id);
+      console.log('✅ Payment verified successfully for order:', db_order_id);
+      
+      // Update order status in Supabase
+      const { data: order, error: updateError } = await supabase
+        .from('orders')
+        .update({ 
+          status: 'paid',
+          razorpay_payment_id: payment_id,
+          razorpay_order_id: order_id
+        })
+        .eq('id', db_order_id)
+        .select()
+        .single();
+      
+      if (updateError) {
+        console.error('❌ Error updating order status:', updateError);
+      } else {
+        console.log(`📧 Attempting to send confirmation email to: ${order.email}`);
+        // Send order confirmation email (don't await - fire and forget)
+        sendOrderConfirmationEmail(order)
+          .then(result => {
+            if (result.success) {
+              console.log(`✅ Order confirmation email sent for order #${order.id}`);
+            } else {
+              console.error(`❌ Failed to send email for order #${order.id}:`, result.error);
+            }
+          })
+          .catch(err => {
+            console.error(`⚠️ Email sending error for order #${order.id}:`, err);
+          });
+      }
       
       res.json({ 
         success: true,
         message: 'Payment verified successfully'
       });
     } else {
-      console.error('Invalid signature for payment:', payment_id);
+      console.error('❌ Invalid signature for payment:', payment_id);
       res.status(400).json({ 
         success: false, 
         error: 'Invalid signature' 
       });
     }
   } catch (error) {
-    console.error('Error verifying payment:', error);
+    console.error('❌ Error verifying payment:', error);
     res.status(500).json({ 
       success: false, 
       error: error.message 
