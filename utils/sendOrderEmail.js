@@ -44,19 +44,23 @@ const generateOrderEmailHTML = (order) => {
     }
     .header {
       text-align: center;
-      padding: 30px 0;
+      padding: 30px 20px;
       background: linear-gradient(135deg, #ba8245 0%, #8b5a2e 100%);
       border-radius: 12px 12px 0 0;
       color: white;
     }
-    .header h1 {
-      margin: 0;
-      font-size: 32px;
-      letter-spacing: 2px;
+    .header-logo {
+      max-width: 180px;
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
     }
     .header p {
-      margin: 5px 0 0;
+      margin: 10px 0 0;
       opacity: 0.9;
+      font-size: 14px;
+      letter-spacing: 1px;
     }
     .content {
       padding: 30px 25px;
@@ -164,20 +168,29 @@ const generateOrderEmailHTML = (order) => {
       .container { padding: 10px; }
       .content { padding: 20px 15px; }
       .order-table th, .order-table td { padding: 8px; }
+      .header-logo { max-width: 140px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-   <div class="header">
-  <div style="text-align: center;">
-    <img src="https://siyaanish.com/static/media/Siyaanishlogo1.71a6246271bee5ae74ab.png" 
-         alt="Siyaanish" 
-         width="180" 
-         style="max-width: 180px; width: 100%; height: auto; border: none; display: inline-block;">
-  </div>
-  <p style="margin-top: 10px;">Luxury Redefined</p>
-</div>
+    <div class="header">
+      <!--[if (gte mso 9)|(IE)]>
+        <table width="180" align="center" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td>
+      <![endif]-->
+      <img src="https://siyaanish.com/static/media/Siyaanishlogo1.71a6246271bee5ae74ab.png" 
+           alt="Siyaanish Logo" 
+           class="header-logo"
+           style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto;">
+      <!--[if (gte mso 9)|(IE)]>
+            </td>
+          </tr>
+        </table>
+      <![endif]-->
+      <p>Luxury Redefined</p>
+    </div>
     
     <div class="content">
       <div class="success-badge">
