@@ -169,10 +169,15 @@ const generateOrderEmailHTML = (order) => {
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h1>✨ SIYAANISH ✨</h1>
-      <p>Luxury Redefined</p>
-    </div>
+   <div class="header">
+  <div style="text-align: center;">
+    <img src="https://siyaanish.com/static/media/Siyaanishlogo1.71a6246271bee5ae74ab.png" 
+         alt="Siyaanish" 
+         width="180" 
+         style="max-width: 180px; width: 100%; height: auto; border: none; display: inline-block;">
+  </div>
+  <p style="margin-top: 10px;">Luxury Redefined</p>
+</div>
     
     <div class="content">
       <div class="success-badge">
@@ -234,7 +239,7 @@ const generateOrderEmailHTML = (order) => {
         We'll process your order within 24 hours and send you tracking information once shipped.
         <br><br>
         <strong>📞 Need Help?</strong><br>
-        <a href="mailto:support@siyaanish.com" style="color: #ba8245;">support@siyaanish.com</a> | +91-XXXXXXXXXX
+        <a href="mailto:info@siyaanish.com" style="color: #ba8245;">info@siyaanish.com</a> | +91-7981644655
         <br><br>
         <small>Our support team is available Mon-Sat, 10 AM - 7 PM</small>
       </div>
@@ -245,8 +250,8 @@ const generateOrderEmailHTML = (order) => {
       <p>This is a transactional email regarding your recent purchase.</p>
       <p>Siyaanish - Your Trusted Fashion Destination</p>
       <p style="margin-top: 15px;">
-        <a href="https://yourstore.com/privacy" style="color: #999;">Privacy Policy</a> | 
-        <a href="https://yourstore.com/returns" style="color: #999;">Return Policy</a>
+        <a href="https://siyaanish.com/privacy-policy" style="color: #999;">Privacy Policy</a> | 
+        <a href="https://siyaanish.com/return-policy" style="color: #999;">Return Policy</a>
       </p>
     </div>
   </div>
@@ -303,7 +308,7 @@ Track your order: https://yourstore.com/orders/${order.id}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Need help? Contact support@siyaanish.com
+Need help? Contact info@siyaanish.com
 
 Thank you for shopping with Siyaanish!
 
