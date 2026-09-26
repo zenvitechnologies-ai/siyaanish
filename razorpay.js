@@ -61,13 +61,19 @@ const verifyPayment = async (req, res) => {
     
     const { order_id, payment_id, signature, db_order_id } = req.body;
 
+    if (!order_id || !payment_id || !signature) {
+      return res.status(400).json({ success: false, error: 'order_id, payment_id and signature are required' });
+    }
+
     const body = order_id + '|' + payment_id;
     const expectedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(body.toString())
       .digest('hex');
 
-    const isValid = expectedSignature === signature;
+    const isValid =
+      expectedSignature.length === signature.length &&
+      crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(signature));
 
     if (isValid) {
       // Payment is verified successfully
