@@ -1,10 +1,6 @@
-console.log("RESEND KEY:", process.env.RESEND_API_KEY);
 const bcrypt = require("bcryptjs");
 const supabase = require("../config/supabase");
 const { Resend } = require("resend");
-
-console.log("=== AUTH CONTROLLER LOADED ===");
-console.log("RESEND KEY AT START:", process.env.RESEND_API_KEY);
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -13,6 +9,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const sendOtp = async (req, res) => {
   try {
     let { email } = req.body;
+    if (!email) return res.status(400).json({ msg: "Email is required" });
     email = email.trim().toLowerCase();
 
     // ===== FETCH USER =====
@@ -41,13 +38,19 @@ const sendOtp = async (req, res) => {
       return res.status(500).json({ msg: "DB Update Error" });
 
     // ===== SEND EMAIL =====
-    await resend.emails.send({
-      from: "noreply@luxcoat.in",
+    const { error: mailError } = await resend.emails.send({
+      // Must be a domain verified in your Resend account
+      from: process.env.RESEND_FROM_ADDRESS || "noreply@luxcoat.in",
       to: email,
       subject: "Your OTP Code",
       html: `<h2>Your OTP is ${otp}</h2>
             <p>This OTP expires in 5 minutes.</p>`
     });
+
+    if (mailError) {
+      console.error("Resend error:", mailError);
+      return res.status(500).json({ msg: "Mail Failed" });
+    }
 
     res.json({ msg: "OTP Sent" });
 
@@ -64,6 +67,9 @@ const verifyOtp = async (req, res) => {
   try {
     let { email, otp, newPassword } = req.body;
 
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ msg: "email, otp and newPassword are required" });
+    }
     console.log("RAW VERIFY EMAIL:", email);
     email = email.trim().toLowerCase();
     console.log("FORMATTED VERIFY EMAIL:", email);
