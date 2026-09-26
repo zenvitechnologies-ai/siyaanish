@@ -1,12 +1,14 @@
 // utils/sendOrderEmail.js
 const mailer = require('../config/mailer');
 
+const money = (n) => Number(n || 0).toLocaleString("en-IN");
+
 const generateOrderEmailHTML = (order) => {
   // Calculate subtotal (total - shipping)
-  const subtotal = order.total_amount - 100;
+  const subtotal = Number(order.total_amount || 0) - 100;
   
   // Format items table
-  const itemsTable = order.items.map(item => `
+  const itemsTable = (order.items || []).map(item => `
     <tr>
       <td style="padding: 12px; border-bottom: 1px solid #eee;">
         <img src="${item.product_image}" alt="${item.product_name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
@@ -16,7 +18,7 @@ const generateOrderEmailHTML = (order) => {
         <span style="color: #666; font-size: 12px;">Size: ${item.size || 'N/A'} | Qty: ${item.quantity}</span>
        </td>
       <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
-        <strong>₹${item.subtotal.toLocaleString()}</strong>
+        <strong>₹${money(item.subtotal)}</strong>
        </td>
     </tr>
   `).join('');
@@ -220,7 +222,7 @@ const generateOrderEmailHTML = (order) => {
       <div class="summary-box">
         <div class="summary-row">
           <span>Subtotal:</span>
-          <span>₹${subtotal.toLocaleString()}</span>
+          <span>₹${money(subtotal)}</span>
         </div>
         <div class="summary-row">
           <span>Shipping:</span>
@@ -228,7 +230,7 @@ const generateOrderEmailHTML = (order) => {
         </div>
         <div class="summary-row total">
           <span>Total:</span>
-          <span>₹${order.total_amount.toLocaleString()}</span>
+          <span>₹${money(order.total_amount)}</span>
         </div>
       </div>
       
@@ -242,7 +244,7 @@ const generateOrderEmailHTML = (order) => {
       </div>
       
       <div style="text-align: center;">
-        <a href="https://yourstore.com/orders/${order.id}" class="track-button" style="color: white; text-decoration: none;">
+        <a href="https://siyaanish.com/track-order" class="track-button" style="color: white; text-decoration: none;">
           📍 Track Your Order
         </a>
       </div>
@@ -273,9 +275,9 @@ const generateOrderEmailHTML = (order) => {
 };
 
 const generateOrderEmailText = (order) => {
-  const subtotal = order.total_amount - 100;
+  const subtotal = Number(order.total_amount || 0) - 100;
   
-  const itemsList = order.items.map(item => 
+  const itemsList = (order.items || []).map(item => 
     `  - ${item.product_name} (${item.size || 'N/A'}) x${item.quantity} = ₹${item.subtotal}`
   ).join('\n');
   
@@ -317,7 +319,7 @@ Email: ${order.email}
 WHAT'S NEXT?
 We'll process your order within 24 hours and send tracking information once shipped.
 
-Track your order: https://yourstore.com/orders/${order.id}
+Track your order: https://siyaanish.com/track-order
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
